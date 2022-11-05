@@ -13,3 +13,7 @@ for this project by executing this inside your terminal:
 Now, you just have to type `cargo build` to build.
 To switch back to the stable toolchain, execute
 `rustup override set stable`.
+
+## Run
+To run this operating system on qemu, just run
+`cargo run`.
