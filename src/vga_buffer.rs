@@ -1,3 +1,5 @@
+use volatile::Volatile;
+
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -46,7 +48,7 @@ const BUFFER_WIDTH: usize = 80;
 
 #[repr(transparent)]
 struct Buffer {
-    chars: [[ScreenChar; BUFFER_WIDTH]; BUFFER_HEIGHT],
+    chars: [[Volatile<ScreenChar>; BUFFER_WIDTH]; BUFFER_HEIGHT],
 }
 
 
@@ -65,7 +67,7 @@ impl Writer {
         }
     }
 
-    pub fn write_str(&mut self, s: &str) {
+    pub fn write_string(&mut self, s: &str) {
         for byte in s.bytes() {
             match byte {
                 // Printable ASCII byte
@@ -85,14 +87,19 @@ impl Writer {
         if self.col >= BUFFER_WIDTH {
             self.new_line();
         }
-        self.buffer.chars[0][self.col] = ScreenChar {
+        self.buffer.chars[0][self.col].write(ScreenChar {
             ascii_char: byte,
             color_code: self.color_code
-        };
+        });
         self.col += 1;
     }
 
-    fn new_line(&mut self) {
+    fn new_line(&mut self) { }
+}
 
+impl core::fmt::Write for Writer {
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        self.write_string(s);
+        Ok(())
     }
 }

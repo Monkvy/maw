@@ -12,24 +12,22 @@ fn panic(_info: &PanicInfo) -> ! {
 }
 
 
-static HELLO: &[u8] = b":-)";
-
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     let mut writer = Writer::new();
     
     writer.color_code = ColorCode::new(Color::Red, Color::Black);
-    writer.write_str(":");
+    writer.write_string(":");
 
     writer.color_code = ColorCode::new(Color::Yellow, Color::Black);
-    writer.write_str("-");
+    writer.write_string("-");
 
     writer.color_code = ColorCode::new(Color::Cyan, Color::Black);
-    writer.write_str(")");
-
-
-
+    writer.write_string(") ");
 
     
+    write!(writer, "{}", 2 / 5);
+
+
     loop {}
 }
