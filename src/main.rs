@@ -1,7 +1,9 @@
 #![no_std]
 #![no_main]
 
+mod vga_buffer;
 use core::panic::PanicInfo;
+use vga_buffer::{Writer, ColorCode, Color};
 
 
 #[panic_handler]
@@ -14,14 +16,20 @@ static HELLO: &[u8] = b":-)";
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    let vga_buffer = 0xb8000 as *mut u8;
+    let mut writer = Writer::new();
+    
+    writer.color_code = ColorCode::new(Color::Red, Color::Black);
+    writer.write_str(":");
 
-    for (i, &byte) in HELLO.iter().enumerate() {
-        unsafe {
-            *vga_buffer.offset(i as isize * 2) = byte;
-            *vga_buffer.offset(i as isize * 2 + 1) = 0xb;
-        }
-    }
+    writer.color_code = ColorCode::new(Color::Yellow, Color::Black);
+    writer.write_str("-");
 
+    writer.color_code = ColorCode::new(Color::Cyan, Color::Black);
+    writer.write_str(")");
+
+
+
+
+    
     loop {}
 }
